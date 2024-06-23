@@ -14,8 +14,6 @@ interface FolderData {
 const FOLDER_TAB_WIDTH: number = 200;
 const FOLDER_TAB_SPACING: number = 50;
 const FOLDER_SPACING: number = 25;
-const BOUNCE_AMOUNT: number = 5;
-const BOUNCE_DURATION: number = 300;
 
 const FolderUI: React.FC = () => {
 	const { height, width } = useWindowDimensions();
