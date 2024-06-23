@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import "../styles/FolderUI.css";
-import Wall from "../assets/Wall.svg";
 import useWindowDimensions from "./Util";
 
 interface FolderData {
@@ -15,6 +14,8 @@ interface FolderData {
 const FOLDER_TAB_WIDTH: number = 200;
 const FOLDER_TAB_SPACING: number = 50;
 const FOLDER_SPACING: number = 25;
+const BOUNCE_AMOUNT: number = 5;
+const BOUNCE_DURATION: number = 300;
 
 const FolderUI: React.FC = () => {
 	const { height, width } = useWindowDimensions();
@@ -122,17 +123,21 @@ const FolderUI: React.FC = () => {
 	}, [handleMouseMove, handleMouseUp]);
 
 	return (
-		<div className="FolderContainer">
+		<div className="FilingCabinet">
 			{folders.map((folder) => (
 				<React.Fragment key={folder.id}>
-					<div onMouseDown={(e) => handleMouseDown(e, folder.id)}>
+					<div
+						className="FolderContainer"
+						onMouseDown={(e) => handleMouseDown(e, folder.id)}
+						style={{ top: `${folder.yPosition}px` }}
+					>
 						<div
 							className={`FolderTab noselect ${
 								draggingFolder === folder.id ? "is-dragging" : ""
 							}`}
 							style={{
-								top: `calc(${folder.yPosition}px - 40px)`,
-								left: `calc(14% + ${
+								top: `-40px`,
+								left: `calc(${
 									(folder.id * (FOLDER_TAB_WIDTH + FOLDER_TAB_SPACING)) %
 									(width / 1.75)
 								}px)`,
@@ -155,7 +160,6 @@ const FolderUI: React.FC = () => {
 					</div>
 				</React.Fragment>
 			))}
-			{/* <img className="FolderWall" src={Wall} alt="wall" /> */}
 		</div>
 	);
 };
