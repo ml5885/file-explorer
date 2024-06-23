@@ -1,0 +1,84 @@
+:root {
+	--background-color: #dbdbdb;
+	--polygon-shape: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
+}
+
+.App {
+	overflow: hidden;
+}
+
+.FolderContainer {
+	width: 100%;
+	height: 100vh !important;
+	background-color: var(--background-color);
+	position: relative;
+	font-family: Helvetica, Arial, sans-serif;
+	overflow: visible;
+	margin: 250px 0px;
+	box-sizing: border-box;
+	display: flex;
+	justify-content: center;
+}
+
+.Folder {
+	position: absolute;
+	width: 75%;
+	height: 100vh;
+	background-color: #e7c9a9;
+	border: 1px solid black;
+	border-radius: 10px;
+	left: 12.5%;
+	transition: top 0.3s ease;
+	/* clip-path: var(--polygon-shape); */
+}
+
+.Folder.is-dragging {
+	transition: none;
+	clip-path: none;
+}
+
+.FolderTab {
+	position: absolute;
+	height: 40px;
+	background-color: #e7c9a9;
+	border: 1px solid black;
+	border-radius: 5px 5px 0px 0px;
+	border-bottom: none;
+	display: flex;
+	align-items: center;
+	padding: 0 10px;
+	font-size: 12px;
+}
+
+.FolderNumber {
+	margin-right: 10px;
+	font-weight: bold;
+}
+
+.FolderWall {
+	position: absolute;
+	top: 65vh;
+	width: 95%;
+	z-index: 99999;
+}
+
+.FolderLabel {
+	position: absolute;
+	bottom: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+	background-color: #ffff00;
+	padding: 5px 10px;
+	font-size: 14px;
+	z-index: 99999;
+	visibility: visible;
+}
+
+.noselect {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
