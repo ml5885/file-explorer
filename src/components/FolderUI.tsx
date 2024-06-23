@@ -12,6 +12,10 @@ interface FolderData {
 	initialYPosition?: number;
 }
 
+const FOLDER_TAB_WIDTH: number = 200;
+const FOLDER_TAB_SPACING: number = 50;
+const FOLDER_SPACING: number = 25;
+
 const FolderUI: React.FC = () => {
 	const { height, width } = useWindowDimensions();
 
@@ -48,7 +52,8 @@ const FolderUI: React.FC = () => {
 		{ id: 30, number: "95", name: "soon" },
 	];
 
-	const generateYPosition = (index: number): number => 20 + index * 18;
+	const generateYPosition = (index: number): number =>
+		20 + index * FOLDER_SPACING;
 
 	const [folders, setFolders] = useState<FolderData[]>(
 		initialFolders.map((folder, index) => ({
@@ -80,7 +85,7 @@ const FolderUI: React.FC = () => {
 				if (folder && folder.initialYPosition !== undefined) {
 					const maxUpwardMovement = 500;
 					const newPosition = Math.max(
-						-200,
+						-100,
 						Math.max(
 							folder.initialYPosition - maxUpwardMovement,
 							Math.min(
@@ -127,9 +132,12 @@ const FolderUI: React.FC = () => {
 							}`}
 							style={{
 								top: `calc(${folder.yPosition}px - 40px)`,
-								left: `calc(14% + ${(folder.id * 120) % (width / 1.75)}px)`,
+								left: `calc(14% + ${
+									(folder.id * (FOLDER_TAB_WIDTH + FOLDER_TAB_SPACING)) %
+									(width / 1.75)
+								}px)`,
 								zIndex: folder.id + 1,
-								width: `120px`,
+								width: FOLDER_TAB_WIDTH,
 							}}
 						>
 							<span className="FolderNumber">{folder.number}</span>
@@ -147,7 +155,7 @@ const FolderUI: React.FC = () => {
 					</div>
 				</React.Fragment>
 			))}
-			<img className="FolderWall" src={Wall} alt="wall" />
+			{/* <img className="FolderWall" src={Wall} alt="wall" /> */}
 		</div>
 	);
 };
