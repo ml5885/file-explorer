@@ -48,6 +48,7 @@
 .FolderTab {
 	position: absolute;
 	height: 40px;
+	top: -60.2px;
 	background-color: var(--folder-color);
 	border: 1px solid black;
 	border-bottom: none;
