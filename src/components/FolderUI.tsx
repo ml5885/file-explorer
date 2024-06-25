@@ -84,7 +84,7 @@ const FolderUI: React.FC = () => {
 				if (folder && folder.initialYPosition !== undefined) {
 					const maxUpwardMovement = 500;
 					const newPosition = Math.max(
-						-100,
+						-50,
 						Math.max(
 							folder.initialYPosition - maxUpwardMovement,
 							Math.min(
@@ -134,7 +134,7 @@ const FolderUI: React.FC = () => {
 								draggingFolder === folder.id ? "is-dragging" : ""
 							}`}
 							style={{
-								top: `-40px`,
+								top: "-60.2px",
 								left: `calc(${
 									(folder.id * (FOLDER_TAB_WIDTH + FOLDER_TAB_SPACING)) %
 									(width / 1.75)
@@ -151,7 +151,7 @@ const FolderUI: React.FC = () => {
 								draggingFolder === folder.id ? "is-dragging" : ""
 							}`}
 							style={{
-								top: `${folder.yPosition}px`,
+								top: `0px`,
 								zIndex: folder.id,
 							}}
 						></div>
