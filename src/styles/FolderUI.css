@@ -32,7 +32,7 @@
 	border: 1px solid black;
 	border-radius: 10px;
 	left: 12.5%;
-	transform: perspective(1000px) rotateX(-5deg);
+	transform: perspective(1000px) rotateX(-20deg);
 }
 
 .Folder.is-dragging {
@@ -60,7 +60,7 @@
 .FolderTab {
 	position: absolute;
 	height: 40px;
-	top: -59px;
+	top: -99px;
 	background-color: var(--folder-color);
 	border: 1px solid black;
 	border-bottom: none;
