@@ -1,4 +1,5 @@
 import React from "react";
+import "./App.css";
 import FolderUI from "./components/FolderUI";
 
 const App: React.FC = () => {
