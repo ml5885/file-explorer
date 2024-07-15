@@ -7,6 +7,10 @@ interface FolderDataJson {
 	id: number;
 	number: string;
 	name: string;
+	content?: {
+		text: string;
+		image: string;
+	};
 }
 
 interface FolderData extends FolderDataJson {
@@ -188,12 +192,25 @@ const FolderUI: React.FC = () => {
 					</div>
 					<div
 						className={`Folder ${
-							draggingFolder === folder.id ? "is-dragging" : ""
+							draggingFolder === folder.id ||
+							folder.initialYPosition !== folder.yPosition
+								? "is-dragging"
+								: ""
 						}`}
 						style={{
 							zIndex: folder.id,
 						}}
-					></div>
+					>
+						{folder.initialYPosition !== folder.yPosition && folder.content && (
+							<div className="FolderContent">
+								<p>{folder.content.text}</p>
+								<img
+									src={folder.content.image}
+									alt={`Content for ${folder.name}`}
+								/>
+							</div>
+						)}
+					</div>
 				</div>
 			))}
 		</div>
