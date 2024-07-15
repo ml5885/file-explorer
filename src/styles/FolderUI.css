@@ -32,13 +32,13 @@
 	border: 1px solid black;
 	border-radius: 10px;
 	left: 12.5%;
-	transform: perspective(1000px) rotateX(-20deg);
+	transform: perspective(1000px) rotateX(-15deg);
 }
 
 .Folder.is-dragging {
 	transform: none;
-	transform: scaleX(1.04);
-	margin-top: -19px;
+	transform: scaleX(1.15);
+	margin-top: -49px;
 }
 
 .FolderContent {
@@ -46,6 +46,7 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	transform: scaleX(calc(1 / 1.15));
 }
 
 .FolderContent p {
@@ -60,7 +61,7 @@
 .FolderTab {
 	position: absolute;
 	height: 40px;
-	top: -99px;
+	top: -89px;
 	background-color: var(--folder-color);
 	border: 1px solid black;
 	border-bottom: none;

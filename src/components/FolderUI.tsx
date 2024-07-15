@@ -174,7 +174,10 @@ const FolderUI: React.FC = () => {
 				>
 					<div
 						className={`FolderTab noselect ${
-							draggingFolder === folder.id ? "is-dragging" : ""
+							draggingFolder === folder.id ||
+							folder.initialYPosition !== folder.yPosition
+								? "is-dragging"
+								: ""
 						}`}
 						style={{
 							left: `${
