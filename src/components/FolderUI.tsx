@@ -205,7 +205,7 @@ const FolderUI: React.FC = () => {
 						}}
 					>
 						{folder.initialYPosition !== folder.yPosition && folder.content && (
-							<div className="FolderContent">
+							<div className="FolderContent noselect">
 								<p>{folder.content.text}</p>
 								<img
 									src={folder.content.image}
