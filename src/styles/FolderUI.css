@@ -37,7 +37,7 @@
 
 .Folder.is-dragging {
 	transform: none;
-	transform: scaleX(1.15);
+	transform: scaleX(1.14);
 	margin-top: -49px;
 }
 
