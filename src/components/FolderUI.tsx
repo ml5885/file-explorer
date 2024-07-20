@@ -7,159 +7,23 @@ import React, {
 } from "react";
 import "../styles/FolderUI.css";
 import useWindowDimensions from "./Util";
+import EditableUsername from "./EditableUsername";
+import Folder from "./Folder";
+import { FolderData } from "./types";
+import { Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
 
-interface FolderData {
-	id: number;
-	number: string;
-	name: string;
-	yPosition: number;
-	initialYPosition: number;
-	content?: {
-		link: string;
-		image: string;
-		text: string;
-	};
-}
-
-interface DragRef {
-	startY: number;
-	folderStartY: number;
-}
-
-const FOLDER_TAB_WIDTH = 200;
-const FOLDER_TAB_SPACING = 50;
 const FOLDER_SPACING = 30;
-const LEFT_MARGIN = 10;
 const TOP_MARGIN = 0;
 
-const EditableUsername: React.FC<{
-	username: string;
-	onUsernameChange: (newUsername: string) => void;
-}> = ({ username, onUsernameChange }) => {
-	const [displayUsername, setDisplayUsername] = useState(username);
-	const spanRef = useRef<HTMLSpanElement>(null);
-
-	useEffect(() => {
-		setDisplayUsername(username);
-	}, [username]);
-
-	const handleInput = (event: React.FormEvent<HTMLSpanElement>) => {
-		event.preventDefault();
-		const selection = window.getSelection();
-		const range = selection?.getRangeAt(0);
-		const offset = range?.startOffset || 0;
-
-		const newUsername = event.currentTarget.textContent || "";
-		setDisplayUsername(newUsername);
-
-		requestAnimationFrame(() => {
-			if (spanRef.current) {
-				const newRange = document.createRange();
-				const textNode = spanRef.current.firstChild || spanRef.current;
-				const newOffset = Math.min(offset, newUsername.length);
-				newRange.setStart(textNode, newOffset);
-				newRange.setEnd(textNode, newOffset);
-				selection?.removeAllRanges();
-				selection?.addRange(newRange);
-			}
-		});
-	};
-
-	const handleKeyDown = (event: React.KeyboardEvent<HTMLSpanElement>) => {
-		if (event.key === "Enter") {
-			event.preventDefault();
-			spanRef.current?.blur();
-			onUsernameChange(displayUsername);
-		}
-	};
-
-	const handleBlur = () => {
-		setDisplayUsername(username);
-	};
-
-	return (
-		<span
-			ref={spanRef}
-			contentEditable
-			suppressContentEditableWarning
-			onInput={handleInput}
-			onKeyDown={handleKeyDown}
-			onBlur={handleBlur}
-			style={{
-				fontStyle: "italic",
-				outline: "none",
-				borderBottom: "1px dashed #999",
-				padding: "0 2px",
-				minWidth: "1em",
-				display: "inline-block",
-			}}
-		>
-			{displayUsername}
-		</span>
-	);
-};
-
-const Folder: React.FC<{
-	folder: FolderData;
-	tabsPerRow: number;
-	index: number;
-	isDragging: boolean;
-	onMouseDown: (e: React.MouseEvent) => void;
-	onTouchStart: (e: React.TouchEvent) => void;
-}> = React.memo(
-	({ folder, tabsPerRow, index, isDragging, onMouseDown, onTouchStart }) => {
-		return (
-			<div className="FolderContainer" style={{ top: `${folder.yPosition}px` }}>
-				<div
-					className={`FolderTab noselect ${isDragging ? "is-dragging" : ""}`}
-					style={{
-						left: `${
-							LEFT_MARGIN +
-							(index % tabsPerRow) * (FOLDER_TAB_WIDTH + FOLDER_TAB_SPACING)
-						}px`,
-						zIndex: folder.id + 1,
-						width: FOLDER_TAB_WIDTH,
-					}}
-					onMouseDown={onMouseDown}
-					onTouchStart={onTouchStart}
-				>
-					<span className="FolderNumber">{folder.number}</span>
-					{folder.name}
-				</div>
-				<div
-					className={`Folder ${isDragging ? "is-dragging" : ""}`}
-					style={{ zIndex: folder.id }}
-				>
-					{folder.initialYPosition !== folder.yPosition && folder.content && (
-						<div className="FolderContent noselect">
-							<p>
-								<a href={folder.content.link} target="_blank" rel="noreferrer">
-									Github Repository Link
-								</a>
-							</p>
-							{folder.content.text && <p>{folder.content.text}</p>}
-							{folder.content.image && (
-								<img
-									src={folder.content.image}
-									alt={`Content for ${folder.name}`}
-								/>
-							)}
-						</div>
-					)}
-				</div>
-			</div>
-		);
-	}
-);
-
 const FolderUI: React.FC = () => {
-	const { width } = useWindowDimensions();
+	const { width, height } = useWindowDimensions();
 	const [folders, setFolders] = useState<FolderData[]>([]);
 	const [username, setUsername] = useState<string>("ml5885");
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [draggingFolder, setDraggingFolder] = useState<number | null>(null);
-	const dragRef = useRef<DragRef | null>(null);
+	const dragRef = useRef<{ startY: number; folderStartY: number } | null>(null);
 
 	const tabsPerRow = useMemo(() => {
 		if (width <= 690) return 1;
@@ -170,9 +34,9 @@ const FolderUI: React.FC = () => {
 	}, [width]);
 
 	const fetchRepos = useCallback(async () => {
-		setLoading(true);
-		setError(null);
 		try {
+			setLoading(true);
+			setError("");
 			const response = await fetch(
 				`https://api.github.com/users/${username}/repos?type=all`,
 				{ headers: { Authorization: "" } }
@@ -190,6 +54,7 @@ const FolderUI: React.FC = () => {
 					content: {
 						link: repo.svn_url,
 						text: repo.description,
+						image: "",
 					},
 				}))
 			);
@@ -323,7 +188,7 @@ const FolderUI: React.FC = () => {
 	}, []);
 
 	return (
-		<div>
+		<div style={{ position: "relative" }}>
 			<h1>
 				<EditableUsername
 					username={username}
@@ -334,23 +199,44 @@ const FolderUI: React.FC = () => {
 			{error && (
 				<div style={{ color: "red", marginBottom: "1rem" }}>Error: {error}</div>
 			)}
-			{loading && <div style={{ marginBottom: "1rem" }}>Loading...</div>}
-			<div className="FilingCabinet">
-				{folders.map((folder, index) => (
-					<Folder
-						key={folder.id}
-						folder={folder}
-						tabsPerRow={tabsPerRow}
-						index={index}
-						isDragging={
-							draggingFolder === folder.id ||
-							folder.initialYPosition !== folder.yPosition
-						}
-						onMouseDown={(e) => handleMouseDown(e, folder.id)}
-						onTouchStart={(e) => handleTouchStart(e, folder.id)}
-					/>
-				))}
-			</div>
+			{loading ? (
+				<div
+					style={{
+						display: "flex",
+						gap: "5px",
+						alignItems: "center",
+						justifyContent: "center",
+						height: "100px",
+					}}
+				>
+					<motion.div
+						animate={{ rotate: 360 }}
+						transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+					>
+						<Loader2 className="h-8 w-8 text-blue-500" />
+					</motion.div>
+					<span className="ml-2">Loading repositories...</span>
+				</div>
+			) : (
+				<>
+					<div className="FilingCabinet">
+						{folders.map((folder, index) => (
+							<Folder
+								key={folder.id}
+								folder={folder}
+								tabsPerRow={tabsPerRow}
+								index={index}
+								isDragging={
+									draggingFolder === folder.id ||
+									folder.initialYPosition !== folder.yPosition
+								}
+								onMouseDown={(e) => handleMouseDown(e, folder.id)}
+								onTouchStart={(e) => handleTouchStart(e, folder.id)}
+							/>
+						))}
+					</div>
+				</>
+			)}
 		</div>
 	);
 };
