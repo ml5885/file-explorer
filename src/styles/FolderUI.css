@@ -11,7 +11,7 @@
 	background-color: var(--background-color);
 	position: relative;
 	overflow: visible;
-	margin: 150px 0px;
+	margin: 300px 0px;
 	box-sizing: border-box;
 	display: flex;
 	justify-content: center;
@@ -137,4 +137,37 @@
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+}
+
+.UserInfo {
+	display: flex;
+	justify-content: center;
+	text-align: left;
+	gap: 30px;
+	margin-bottom: -150px;
+}
+
+.UserInfoCard {
+	display: flex;
+	/* align-items: center; */
+	border: 1px solid var(--border-color);
+	border-radius: 10px;
+	width: max-content;
+	padding: 20px;
+	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.UserAvatar {
+	border-radius: 50%;
+	width: 60px;
+	height: 60px;
+	margin-right: 1rem;
+}
+
+.UserDetails {
+	line-height: 1.5;
+}
+
+.UserDetails p {
+	margin: 0;
 }

@@ -9,7 +9,7 @@ import "../styles/FolderUI.css";
 import useWindowDimensions from "./Util";
 import EditableUsername from "./EditableUsername";
 import Folder from "./Folder";
-import { FolderData, RepoContent } from "./types";
+import { FolderData, RepoContent, UserInfo as UserInfoType } from "./types";
 import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -23,6 +23,7 @@ const FolderUI: React.FC = () => {
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [draggingFolder, setDraggingFolder] = useState<number | null>(null);
+	const [userInfo, setUserInfo] = useState<UserInfoType | null>(null);
 	const dragRef = useRef<{ startY: number; folderStartY: number } | null>(null);
 
 	const tabsPerRow = useMemo(() => {
@@ -37,15 +38,24 @@ const FolderUI: React.FC = () => {
 		try {
 			setLoading(true);
 			setError("");
-			const response = await fetch(
+
+			const userResponse = await fetch(
+				`https://api.github.com/users/${username}`
+			);
+			if (!userResponse.ok)
+				throw new Error(`User fetch error! status: ${userResponse.status}`);
+			const userData = await userResponse.json();
+			setUserInfo(userData);
+
+			const repoResponse = await fetch(
 				`https://api.github.com/users/${username}/repos?type=all`,
 				{ headers: { Authorization: "" } }
 			);
-			if (!response.ok)
-				throw new Error(`HTTP error! status: ${response.status}`);
-			const data = await response.json();
+			if (!repoResponse.ok)
+				throw new Error(`Repo fetch error! status: ${repoResponse.status}`);
+			const reposData = await repoResponse.json();
 			setFolders(
-				data.map((repo: RepoContent, index: number) => ({
+				reposData.map((repo: RepoContent, index: number) => ({
 					id: index,
 					number: `${String(index).padStart(3, "0")}`,
 					name: repo.name,
@@ -66,9 +76,10 @@ const FolderUI: React.FC = () => {
 				}))
 			);
 		} catch (error) {
-			console.error("Error fetching repositories:", error);
+			console.error("Error fetching data:", error);
 			setError(error instanceof Error ? error.message : String(error));
 			setFolders([]);
+			setUserInfo(null);
 		} finally {
 			setLoading(false);
 		}
@@ -115,7 +126,7 @@ const FolderUI: React.FC = () => {
 				if (folder) {
 					const maxUpwardMovement = 500;
 					const newPosition = Math.max(
-						-50,
+						-200,
 						Math.max(
 							folder.initialYPosition - maxUpwardMovement,
 							Math.min(
@@ -191,6 +202,7 @@ const FolderUI: React.FC = () => {
 	const handleUsernameChange = useCallback((newUsername: string) => {
 		setUsername(newUsername);
 		setFolders([]);
+		setUserInfo(null);
 		setError(null);
 	}, []);
 
@@ -201,8 +213,33 @@ const FolderUI: React.FC = () => {
 					username={username}
 					onUsernameChange={handleUsernameChange}
 				/>
-				's Github Repositories
+				's GitHub Repositories
 			</h1>
+			{userInfo && !loading && (
+				<div className="UserInfo">
+					<div className="UserInfoCard">
+						<img
+							src={userInfo.avatar_url}
+							alt="Avatar"
+							className="UserAvatar"
+						/>
+						<div className="UserDetails">
+							<p>
+								<strong>Bio:</strong> {userInfo.bio || "No bio available."}
+							</p>
+							<p>
+								<strong>Public Repos:</strong> {userInfo.public_repos}
+							</p>
+							<p>
+								<strong>Followers:</strong> {userInfo.followers}
+							</p>
+							<p>
+								<strong>Following:</strong> {userInfo.following}
+							</p>
+						</div>
+					</div>
+				</div>
+			)}
 			{error && (
 				<div style={{ color: "red", marginBottom: "1rem" }}>Error: {error}</div>
 			)}
