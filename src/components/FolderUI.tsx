@@ -29,7 +29,7 @@ const FOLDER_TAB_WIDTH = 200;
 const FOLDER_TAB_SPACING = 50;
 const FOLDER_SPACING = 30;
 const LEFT_MARGIN = 10;
-const TOP_MARGIN = 150;
+const TOP_MARGIN = 20;
 
 const FolderUI: React.FC = () => {
 	const { height, width } = useWindowDimensions();
@@ -45,7 +45,12 @@ const FolderUI: React.FC = () => {
 		const fetchRepos = async () => {
 			try {
 				const response = await fetch(
-					"https://api.github.com/users/ml5885/repos"
+					"https://api.github.com/users/ml5885/repos?type=all",
+					{
+						headers: {
+							Authorization: "",
+						},
+					}
 				);
 				const data = await response.json();
 				const loadedFolders: FolderData[] = data.map(
