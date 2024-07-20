@@ -1,15 +1,17 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import "../styles/FolderUI.css";
 import useWindowDimensions from "./Util";
-import folderData from "../data/folderData.json";
+import axios from "axios";
+import cheerio from "cheerio";
 
 interface FolderDataJson {
 	id: number;
 	number: string;
 	name: string;
 	content?: {
-		text: string;
+		link: string;
 		image: string;
+		text: string;
 	};
 }
 
@@ -25,28 +27,50 @@ interface DragRef {
 
 const FOLDER_TAB_WIDTH = 200;
 const FOLDER_TAB_SPACING = 50;
-const FOLDER_SPACING = 25;
+const FOLDER_SPACING = 30;
 const LEFT_MARGIN = 10;
+const TOP_MARGIN = 150;
 
 const FolderUI: React.FC = () => {
 	const { height, width } = useWindowDimensions();
 
 	const generateYPosition = (index: number): number =>
-		20 + index * FOLDER_SPACING;
+		TOP_MARGIN + index * FOLDER_SPACING;
 
 	const [folders, setFolders] = useState<FolderData[]>([]);
 	const [draggingFolder, setDraggingFolder] = useState<number | null>(null);
 	const dragRef = useRef<DragRef | null>(null);
 
 	useEffect(() => {
-		const loadedFolders: FolderData[] = folderData.map(
-			(folder: FolderDataJson, index: number) => ({
-				...folder,
-				yPosition: generateYPosition(index),
-				initialYPosition: generateYPosition(index),
-			})
-		);
-		setFolders(loadedFolders);
+		const fetchRepos = async () => {
+			try {
+				const response = await fetch(
+					"https://api.github.com/users/ml5885/repos"
+				);
+				const data = await response.json();
+				const loadedFolders: FolderData[] = data.map(
+					(repo: any, index: number) => ({
+						id: index,
+						number: index,
+						name: repo.name,
+						yPosition: generateYPosition(index),
+						initialYPosition: generateYPosition(index),
+						content: {
+							link: repo.svn_url,
+							text: repo.description,
+						},
+					})
+				);
+				setFolders(loadedFolders);
+				for (let i = 0; i < data.length; i++) {
+					console.log(data[i].description);
+				}
+			} catch (error) {
+				console.error("Error fetching repositories:", error);
+			}
+		};
+
+		fetchRepos();
 	}, []);
 
 	const handleMouseDown = (e: React.MouseEvent, folderId: number) => {
@@ -206,11 +230,24 @@ const FolderUI: React.FC = () => {
 					>
 						{folder.initialYPosition !== folder.yPosition && folder.content && (
 							<div className="FolderContent noselect">
-								<p>{folder.content.text}</p>
-								<img
-									src={folder.content.image}
-									alt={`Content for ${folder.name}`}
-								/>
+								<p>
+									<a
+										href={folder.content.link}
+										target="_blank"
+										rel="noreferrer"
+									>
+										Github Repository Link
+									</a>
+								</p>
+								{folder.content.text ? <p>{folder.content.text}</p> : <></>}
+								{folder.content.image ? (
+									<img
+										src={folder.content.image}
+										alt={`Content for ${folder.name}`}
+									/>
+								) : (
+									<></>
+								)}
 							</div>
 						)}
 					</div>
