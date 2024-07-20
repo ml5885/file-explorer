@@ -9,7 +9,7 @@ import "../styles/FolderUI.css";
 import useWindowDimensions from "./Util";
 import EditableUsername from "./EditableUsername";
 import Folder from "./Folder";
-import { FolderData } from "./types";
+import { FolderData, RepoContent } from "./types";
 import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -45,16 +45,23 @@ const FolderUI: React.FC = () => {
 				throw new Error(`HTTP error! status: ${response.status}`);
 			const data = await response.json();
 			setFolders(
-				data.map((repo: any, index: number) => ({
+				data.map((repo: RepoContent, index: number) => ({
 					id: index,
-					number: index,
+					number: `${String(index).padStart(3, "0")}`,
 					name: repo.name,
 					yPosition: TOP_MARGIN + index * FOLDER_SPACING,
 					initialYPosition: TOP_MARGIN + index * FOLDER_SPACING,
 					content: {
-						link: repo.svn_url,
-						text: repo.description,
-						image: "",
+						name: repo.name,
+						description: repo.description || "No description available.",
+						html_url: repo.html_url,
+						created_at: repo.created_at,
+						updated_at: repo.updated_at,
+						language: repo.language,
+						stargazers_count: repo.stargazers_count,
+						forks_count: repo.forks_count,
+						open_issues_count: repo.open_issues_count,
+						visibility: repo.visibility,
 					},
 				}))
 			);
@@ -194,7 +201,7 @@ const FolderUI: React.FC = () => {
 					username={username}
 					onUsernameChange={handleUsernameChange}
 				/>
-				's GitHub Projects
+				's Github Repositories
 			</h1>
 			{error && (
 				<div style={{ color: "red", marginBottom: "1rem" }}>Error: {error}</div>
@@ -215,7 +222,7 @@ const FolderUI: React.FC = () => {
 					>
 						<Loader2 className="h-8 w-8 text-blue-500" />
 					</motion.div>
-					<span className="ml-2">Loading repositories...</span>
+					<span className="ml-2">Loading data...</span>
 				</div>
 			) : (
 				<>
