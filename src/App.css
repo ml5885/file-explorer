@@ -1,8 +1,14 @@
 .App {
 	text-align: center;
-	overflow: hidden;
+	overflow-y: scroll;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+	scroll-snap-type: y mandatory;
 }
 
+.App::-webkit-scrollbar {
+	display: none;
+}
 .App-logo {
 	height: 40vmin;
 	pointer-events: none;
