@@ -62,9 +62,6 @@ const FolderUI: React.FC = () => {
 					})
 				);
 				setFolders(loadedFolders);
-				for (let i = 0; i < data.length; i++) {
-					console.log(data[i].description);
-				}
 			} catch (error) {
 				console.error("Error fetching repositories:", error);
 			}
