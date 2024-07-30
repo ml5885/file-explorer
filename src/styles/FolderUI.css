@@ -50,7 +50,7 @@
 .Folder.is-dragging {
 	transform: none;
 	transform: scaleX(1.14);
-	margin-top: -53.5px;
+	margin-top: -49px;
 }
 
 .FolderContent {
