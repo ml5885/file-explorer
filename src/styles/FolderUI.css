@@ -50,7 +50,7 @@
 .Folder.is-dragging {
 	transform: none;
 	transform: scaleX(1.14);
-	margin-top: -49px;
+	margin-top: -54px;
 }
 
 .FolderContent {
@@ -110,7 +110,7 @@
 .FolderTab {
 	position: absolute;
 	height: 40px;
-	top: -89px;
+	top: -93.5px;
 	background-color: var(--background-color);
 	border: 1px solid var(--border-color);
 	border-bottom: none;
