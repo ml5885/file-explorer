@@ -3,12 +3,12 @@
 	overflow-y: scroll;
 	scrollbar-width: none;
 	-ms-overflow-style: none;
-	scroll-snap-type: y mandatory;
 }
 
 .App::-webkit-scrollbar {
 	display: none;
 }
+
 .App-logo {
 	height: 40vmin;
 	pointer-events: none;
@@ -33,6 +33,17 @@
 
 .App-link {
 	color: #61dafb;
+}
+
+.credit {
+	font-family: Helvetica, Arial, sans-serif;
+	position: absolute;
+	top: 0;
+	left: 0;
+	padding: 10px;
+	font-size: 16px;
+	z-index: 1;
+	font-weight: bold;
 }
 
 @keyframes App-logo-spin {
